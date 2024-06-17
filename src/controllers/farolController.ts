@@ -51,11 +51,13 @@ export const getAllInfo = async (req: Request, res: Response) => {
             }
         });
 
+        const informations = filterArray(infos);
+        informations.splice(1, 0, disponibilidade[1]);
+        informations.splice(2, 0, valor);
+
         // Creates the array with the results
         const result = {
-            infos: filterArray(infos),
-            disponibilidade: disponibilidade[1],
-            valor: valor,
+            informacoes: informations,
             linksImage: imageLinks,
         };
 
