@@ -3,6 +3,9 @@ import helmet from "helmet";
 import router from "./routes";
 import path from "path";
 import cors from "cors";
+import dotenv from "dotenv";
+import { sequelize } from "./instances/mysql";
+import "./models";
 
 const app = express();
 app.use(helmet());
@@ -22,8 +25,17 @@ app.use(
 
 app.use("/", router);
 
-const port = process.env.PORT || 3000;
+dotenv.config();
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+const PORT = process.env.PORT;
+
+sequelize
+    .sync()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Servidor rodando na porta ${PORT}`);
+        });
+    })
+    .catch((err) =>
+        console.error("Erro ao sincronizar com o banco de dados:", err)
+    );

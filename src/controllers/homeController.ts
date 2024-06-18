@@ -1,18 +1,12 @@
 import { Request, Response } from "express";
+import { startCrawling } from "./crawlerController";
+import { getLinksJoris } from "./scrapingJoris.Controller";
+import { getLinksFarol } from "./scrapingFarol.Controller";
 
 export const getIndex = (req: Request, res: Response): void => {
-    const links = {
-        farolImoveis: {
-            url: "/imobiliaria-farol",
-            method: "POST",
-            body: "url da página",
-        },
-        imobiliariaJoris: {
-            url: "/imobiliaria-joris",
-            method: "POST",
-            body: "url da página",
-        },
-    };
+    startCrawling("https://farolimoveismarechal.com/", "Farol Imóveis");
+    startCrawling("https://www.imobiliariajoris.com.br/", "Imobiliária Jóris");
 
-    res.json({ links: links });
+    getLinksJoris(req, res);
+    getLinksFarol(req, res);
 };

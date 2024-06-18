@@ -7,6 +7,12 @@ export const wordsNeverUsed = [
     "MENU",
     "ENVIE SUA PROPOSTA",
     "AGENDAR VISITA",
-    'veja no mapa',
-    'mais imóveis'
+    "veja no mapa",
+    "mais imóveis",
+    "login",
+    "imagens",
+    "compartilhe",
+    "imprimir imóvel",
+    "enviar para um amigo",
+    "oferecer imóvel em troca",
 ];
