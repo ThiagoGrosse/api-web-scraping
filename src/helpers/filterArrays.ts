@@ -2,7 +2,7 @@ import { wordsNeverUsed } from "../data/wordsNeverUsed";
 
 const wordsList = wordsNeverUsed;
 
-export const filterArray = (arrayList: string[]): string[] => {
+export const filterInfos = (arrayList: string[]): string[] => {
     const palavrasExcluirLower = wordsList.map((palavra) =>
         palavra.toLowerCase()
     );

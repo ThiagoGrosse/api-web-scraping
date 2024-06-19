@@ -1,0 +1,24 @@
+*** Controllers ***
+    > Crawler - Fazer o crawler do dominio e salvar os links válidos no banco de dados
+    > Scraping {loja} - Fazer o scraping do link e salvar os dados no banco de dados
+    > Price History - Gravar histórico de preço no banco de dados
+    > Pegar dados - Fazer as consultas no banco de dados para retornar via API
+
+*** Scraping ***
+    > Buscar todos os link no banco de dados
+    > Acessar um link
+    > Verificar se já foi feito Scraping deste link
+    > Realiza o Scraping
+    > Caso já tenha sido feito scraping antes, atualiza os dados no banco de dados
+    > Caso não tenha feito, grava os dados do scraping no banco de dados
+
+*** Funções Relativos ao banco de dados ***
+    > Salvar tabela crawlers {links dos sites};
+    > Salvar tabela infos { valor, loja, tipo de oferta(venda/locação), detalhes};
+    > Salvar tabela imagens (um registro para cada imagem);
+    > Salvar tabela histórico de preço;
+
+*** Funções Helper ***
+    > Verificar se o link é válido;
+    > Filtrar array de informações e remover valores que contenham palavras desnecessárias;
+    > Verificar se o ultimo valor gravado no histórico é igual ao valor atual;

@@ -2,19 +2,19 @@ import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../instances/mysql";
 import { Crawler } from "./Crawler";
 
-export class Scraping extends Model {
+export class Info extends Model {
     public id!: number;
     public id_item!: number;
+    public title!: string;
     public value!: number;
-    public sale!: boolean;
-    public rent!: boolean;
     public real_state!: string;
+    public type_of_offer!: string;
     public details!: string;
     public created_at!: Date;
     public updated_at!: Date;
 }
 
-Scraping.init(
+Info.init(
     {
         id: {
             type: DataTypes.INTEGER.UNSIGNED,
@@ -26,27 +26,24 @@ Scraping.init(
             allowNull: false,
             unique: true,
         },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         value: {
             type: DataTypes.NUMBER,
             allowNull: false,
         },
-        sale: {
-            type: DataTypes.BOOLEAN,
+        type_of_offer: {
+            type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: false,
-        },
-        rent: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
         },
         real_state: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: "",
         },
         details: {
-            type: DataTypes.STRING,
+            type: DataTypes.JSON,
             allowNull: true,
         },
         created_at: {
@@ -62,10 +59,10 @@ Scraping.init(
     },
     {
         sequelize,
-        modelName: "Scraping",
-        tableName: "scrapings",
+        modelName: "Info",
+        tableName: "infos",
         timestamps: false,
     }
 );
 
-Scraping.belongsTo(Crawler, { foreignKey: "id_item", as: "crawler" });
+Info.belongsTo(Crawler, { foreignKey: "id_item", as: "crawler" });

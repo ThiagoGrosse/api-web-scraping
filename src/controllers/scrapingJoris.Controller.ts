@@ -1,14 +1,8 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { Request, Response } from "express";
-import { verifiDataExist, verifiImg } from "../helpers/verifiDataInfoExists";
-import { Crawler, Image, PriceHistory, Scraping } from "../models";
-import { startCrawling } from "./crawlerController";
-import { filterArray } from "../helpers/filterArrays";
-
-export const initCrawlerJoris = async (req: Request, res: Response) => {
-    startCrawling("https://www.imobiliariajoris.com.br/", "Imobiliária Jóris");
-};
+import { Crawler, Image, PriceHistory, Info } from "../models";
+import { filterInfos } from "../helpers/filterArrays";
 
 export const getLinksJoris = async (req: Request, res: Response) => {
     const links = await Crawler.findAll({
@@ -17,11 +11,9 @@ export const getLinksJoris = async (req: Request, res: Response) => {
 
     await Promise.all(
         links.map(async (link) => {
-            const dataExist = await verifiDataExist(link.id);
-            const imgExist = await verifiImg(link.id);
 
-            await getDataJoris(link.url, link.id, dataExist); // get data site
-            await getImagesJoris(link.url, link.id, imgExist); // get images
+            // await getDataJoris(link.url, link.id, dataExist); // get data site
+            // await getImagesJoris(link.url, link.id, imgExist); // get images
         })
     );
 };
@@ -69,7 +61,7 @@ const getDataJoris = async (url: string, id: number, dataExist: boolean) => {
     });
     const info: { [key: string]: string } = {};
 
-    filterArray(clearLinhas).forEach((linha) => {
+    filterInfos(clearLinhas).forEach((linha) => {
         const partes = linha.split(":");
         if (partes.length === 2) {
             const chave = partes[0].trim();
@@ -92,9 +84,9 @@ const getDataJoris = async (url: string, id: number, dataExist: boolean) => {
     };
 
     if (!dataExist) {
-        await Scraping.create(dataResolved);
+        await Info.create(dataResolved);
     } else {
-        await Scraping.update(dataResolved, {
+        await Info.update(dataResolved, {
             where: { id_item: id },
         });
     }

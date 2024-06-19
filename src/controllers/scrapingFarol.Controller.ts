@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { filterArray } from "../helpers/filterArrays";
-import { verifiDataExist, verifiImg } from "../helpers/verifiDataInfoExists";
-import { Crawler, Image, PriceHistory, Scraping } from "../models";
+import { Crawler, Image, PriceHistory, Info } from "../models";
 
 /**
  * Get links for Store Farol Imóveis in database
@@ -18,11 +17,9 @@ export const getLinksFarol = async (req: Request, res: Response) => {
 
         await Promise.all(
             links.map(async (link) => {
-                const dataExist = await verifiDataExist(link.id);
-                const imgExist = await verifiImg(link.id);
 
                 // await getDataSiteFarol(link.url, link.id, dataExist); // get data site
-                await getImages(link.url, link.id, imgExist); // get images
+                // await getImages(link.url, link.id, imgExist); // get images
             })
         );
 
@@ -96,9 +93,9 @@ export const getDataSiteFarol = async (
         };
 
         if (!dataExist) {
-            await Scraping.create(createScrapingData); // Create a new Scraping data
+            await Info.create(createScrapingData); // Create a new Scraping data
         } else {
-            await Scraping.update(createScrapingData, {
+            await Info.update(createScrapingData, {
                 // Update existing Scraping data
                 where: { id_item: id },
             });

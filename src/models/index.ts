@@ -1,17 +1,17 @@
 import { Crawler } from "./Crawler";
 import { Image } from "./Image";
 import { PriceHistory } from "./PriceHistory";
-import { Scraping } from "./Scraping";
+import { Info } from "./Info";
 
-Crawler.hasMany(Image, { foreignKey: "id_item", as: "image" });
+Crawler.hasMany(Image, { foreignKey: "id_item", as: "images" });
 Crawler.hasMany(PriceHistory, {
     foreignKey: "id_item",
     as: "price_history",
 });
-Crawler.hasMany(Scraping, { foreignKey: "id_item", as: "scraping" });
+Crawler.hasMany(Info, { foreignKey: "id_item", as: "info" });
 
-Image.belongsTo(Crawler, { foreignKey: "id_item", as: "image" });
+Image.belongsTo(Crawler, { foreignKey: "id_item", as: "images" });
 PriceHistory.belongsTo(Crawler, { foreignKey: "id_item", as: "price_history" });
-Scraping.belongsTo(Crawler, { foreignKey: "id_item", as: "scraping" });
+Info.belongsTo(Crawler, { foreignKey: "id_item", as: "info" });
 
-export { Crawler, Image, PriceHistory, Scraping };
+export { Crawler, Image, PriceHistory, Info };

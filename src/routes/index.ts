@@ -1,20 +1,19 @@
-import { Router } from "express";
-import * as homeController from "../controllers/homeController";
-import * as loginController from "../controllers/authController";
-import * as priceHistoryController from "../controllers/priceHistoryController";
-import * as dataController from "../controllers/getDataController";
+import { Request, Response, Router } from "express";
 import { authMiddleware } from "../middleware/authMiddleware";
+import crawlerRoutes from "./crawlerRoutes";
+import dataRoutes from "./dataRoutes";
+import { Teste } from "../controllers/testeController";
+
 
 const router = Router();
 
-router.get(
-    "/price-history:id",
-    authMiddleware,
-    priceHistoryController.getAllHystory
-);
-router.get('/by-id/:id',dataController.getById)
-router.get("/all", dataController.getAllData);
-router.post("/login", loginController.login);
-router.get("/", homeController.getIndex);
+
+router.use("/get-data", dataRoutes);
+router.use("/crawler", crawlerRoutes);
+
+router.get('/test', Teste);
+router.get("/", (req: Request, res: Response) => {
+    return res.status(200).json({ message: "Olá" });
+});
 
 export default router;
