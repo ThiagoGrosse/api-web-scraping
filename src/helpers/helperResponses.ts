@@ -4,13 +4,21 @@ const sendResponse = <T>(
     res: Response,
     status: number,
     response: T,
-    countResult?: number
+    countResult?: number,
+    page?: number,
+    limit?: number
 ): Response => {
     switch (status) {
         case 200:
             return res
                 .status(status)
-                .json({ success: true, countResult: countResult, response });
+                .json({
+                    success: true,
+                    countResult: countResult,
+                    page: page,
+                    limit: limit,
+                    response,
+                });
         case 400:
             return res
                 .status(status)

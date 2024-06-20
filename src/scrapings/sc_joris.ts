@@ -6,19 +6,17 @@ import { filterInfos } from "../helpers/filterArrays";
 import { parseCurrencyValue } from "../helpers/prices";
 import { createNewInfo } from "../controllers/infosController";
 import { createRegisterImg } from "../controllers/imgController";
+import { createHistoryRegisters } from "../controllers/priceHistoryController";
 
 export const scJoris = async () => {
     const store = "Imobiliária Jóris";
     const result = [];
 
-    // pegar links
     const links = await getAllCrawledLinksByStore(store);
 
-    // pegar id e url
     for (const link of links) {
         const { id, url } = link;
 
-        // Pegar informações
         const data = await getDataInfo(url);
         const saveData = await createNewInfo(
             id,
@@ -29,9 +27,11 @@ export const scJoris = async () => {
             JSON.stringify(data.detalhes)
         );
         const saveImg = await createRegisterImg(id, data.imagens);
+        const priceH = await createHistoryRegisters(id, data.valor);
 
         result.push({ img: saveImg });
         result.push({ data: saveData });
+        result.push({ priceHistory: priceH });
     }
 
     return result;

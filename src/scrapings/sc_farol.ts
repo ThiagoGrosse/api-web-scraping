@@ -6,6 +6,7 @@ import { filterInfos } from "../helpers/filterArrays";
 import { parseCurrencyValue } from "../helpers/prices";
 import { createNewInfo } from "../controllers/infosController";
 import { createRegisterImg } from "../controllers/imgController";
+import { createHistoryRegisters } from "../controllers/priceHistoryController";
 
 export const scFarol = async () => {
     const store = "Farol Imóveis";
@@ -26,9 +27,11 @@ export const scFarol = async () => {
             JSON.stringify(data.detalhes)
         );
         const saveImg = await createRegisterImg(id, data.imagens);
+        const priceH = await createHistoryRegisters(id, data.valor);
 
         result.push({ img: saveImg });
         result.push({ data: saveData });
+        result.push({ priceHistory: priceH });
     }
 
     return result;
