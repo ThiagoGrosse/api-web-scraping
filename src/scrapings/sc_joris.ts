@@ -1,7 +1,10 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 
-import { getAllCrawledLinksByStore } from "../controllers/dataController";
+import {
+    getAllCrawledLinksByStore,
+    removeInaccessibleLink,
+} from "../controllers/dataController";
 import { filterInfos } from "../helpers/filterArrays";
 import { parseCurrencyValue } from "../helpers/prices";
 import { createNewInfo } from "../controllers/infosController";
@@ -17,7 +20,7 @@ export const scJoris = async () => {
     for (const link of links) {
         const { id, url } = link;
 
-        const data = await getDataInfo(url);
+        const data = await getDataInfo(id, url);
         const saveData = await createNewInfo(
             id,
             data.valor,
@@ -37,7 +40,7 @@ export const scJoris = async () => {
     return result;
 };
 
-const getDataInfo = async (url: string) => {
+const getDataInfo = async (id: number, url: string) => {
     var value: number = 0;
     var infos: string = "";
     var title: string = "";
@@ -46,65 +49,78 @@ const getDataInfo = async (url: string) => {
     const imageLinks: string[] = [];
 
     // iniciar cheerio
-    const response = await axios.get(url);
-    const $ = cheerio.load(response.data);
+    await axios
+        .get(url)
+        .then((response) => {
+            const $ = cheerio.load(response.data);
 
-    /**
-     * Coletar informações
-     */
-    $(".div-block-65").each((index, element) => {
-        const info = $(element).text();
-        if (info) {
-            infos = info;
-        }
-    });
+            console.log("Rodando link: " + url);
+            /**
+             * Coletar informações
+             */
+            $(".div-block-65").each((index, element) => {
+                const info = $(element).text();
+                if (info) {
+                    infos = info;
+                }
+            });
 
-    const linhas = infos.split("\n").filter((linha) => linha.trim() !== "");
-    const linesFiltered = linhas
-        .map((line) => line.trim())
-        .filter((line) => line !== "");
+            const linhas = infos
+                .split("\n")
+                .filter((linha) => linha.trim() !== "");
+            const linesFiltered = linhas
+                .map((line) => line.trim())
+                .filter((line) => line !== "");
 
-    /**
-     * Pegar Valor e tipo da oferta
-     */
-    linesFiltered.filter((line) => {
-        if (line.includes("Venda") || line.includes("venda")) {
-            typeOffer = "Venda";
-        }
+            /**
+             * Pegar Valor e tipo da oferta
+             */
+            linesFiltered.filter((line) => {
+                if (line.includes("Venda") || line.includes("venda")) {
+                    typeOffer = "Venda";
+                }
 
-        if (line.includes("Locação") || line.includes("vocação")) {
-            typeOffer = "Locação";
-        }
-        if (line.includes("R$ ")) {
-            const partes = line.split(":");
-            if (partes.length === 2) {
-                value = parseCurrencyValue(partes[1].trim());
+                if (line.includes("Locação") || line.includes("vocação")) {
+                    typeOffer = "Locação";
+                }
+                if (line.includes("R$ ")) {
+                    const partes = line.split(":");
+                    if (partes.length === 2) {
+                        value = parseCurrencyValue(
+                            partes[1].trim().replace(",00", "")
+                        );
 
-                return false;
+                        return false;
+                    }
+                }
+
+                details.push(line);
+                return true;
+            });
+
+            /**
+             * Pegar título
+             */
+            $("#detalhes").each((index, element) => {
+                const getTitle = $(element).text();
+                if (getTitle && getTitle.length > 0) title = getTitle;
+            });
+
+            /**
+             * Pegar imagens
+             */
+            $(".w-slider img").each((index, element) => {
+                const img = $(element).attr("src");
+                if (img && img.includes("http")) {
+                    imageLinks.push(img); // Saves the links in the array
+                }
+            });
+        })
+        .catch(async (error) => {
+            if (error.code === "ENOTFOUND") {
+                await removeInaccessibleLink(id);
             }
-        }
-
-        details.push(line);
-        return true;
-    });
-
-    /**
-     * Pegar título
-     */
-    $("#detalhes").each((index, element) => {
-        const getTitle = $(element).text();
-        if (getTitle && getTitle.length > 0) title = getTitle;
-    });
-
-    /**
-     * Pegar imagens
-     */
-    $(".w-slider img").each((index, element) => {
-        const img = $(element).attr("src");
-        if (img && img.includes("http")) {
-            imageLinks.push(img); // Saves the links in the array
-        }
-    });
+        });
 
     return {
         titulo: title,

@@ -3,7 +3,14 @@ import { scJoris } from "../scrapings/sc_joris";
 import { scFarol } from "../scrapings/sc_farol";
 
 export const Teste = async (req: Request, res: Response) => {
-    const result = await scFarol();
+    var resultFarol: any = "";
+    var resultJoris: any = "";
 
-    res.status(200).json({ /*countResult: result.length,*/ Message: result });
+    resultFarol = await scFarol();
+    resultJoris = await scJoris();
+
+    res.status(200).json({
+        /*countResult: result.length,*/ Message: resultFarol,
+        resultJoris,
+    });
 };

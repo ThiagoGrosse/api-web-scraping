@@ -16,6 +16,13 @@ export const getAllCrawledLinksByStore = async (
 };
 
 /**
+ * Remover link do banco de dados
+ */
+export const removeInaccessibleLink = async (id: number) => {
+    return await Crawler.destroy({ where: { id: id } });
+};
+
+/**
  * Busca todos os dados
  */
 export const getData = async (req: Request, res: Response) => {
@@ -129,7 +136,7 @@ export const searchInfo = async (req: Request, res: Response) => {
     try {
         const page = parseInt(req.query.page as string) || 1; // Página atual (padrão: 1)
         const limit = parseInt(req.query.limit as string) || 20; // Número de itens por página (padrão: 10)
-        const term = req.query.term as string;
+        const term = req.query.search as string;
         const offset = (page - 1) * limit;
 
         const count = await Crawler.count({
