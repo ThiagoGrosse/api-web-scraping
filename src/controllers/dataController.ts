@@ -19,7 +19,19 @@ export const getAllCrawledLinksByStore = async (
  * Remover link do banco de dados
  */
 export const removeInaccessibleLink = async (id: number) => {
-    return await Crawler.destroy({ where: { id: id } });
+    const removeLink = await Crawler.destroy({ where: { id: id } });
+    const removeImgs = await Image.destroy({ where: { id_item: id } });
+    const removeHistory = await PriceHistory.destroy({
+        where: { id_item: id },
+    });
+    const removeInfo = await Info.destroy({ where: { id_item: id } });
+
+    return {
+        removeHistory: removeHistory,
+        removeImgs: removeImgs,
+        removeInfo: removeInfo,
+        removeLink: removeLink,
+    };
 };
 
 /**
